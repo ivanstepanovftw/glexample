@@ -12,6 +12,11 @@ pacman:
 pacman -S cmake glfw-x11 libepoxy glm
 ```
 
+apt:
+```
+apt install cmake libglfw3 libglm-dev
+```
+
 Reproducer:
 ```
 git clone https://github.com/ivanstepanovftw/glexample.git
