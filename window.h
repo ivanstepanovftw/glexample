@@ -19,13 +19,9 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 class WindowSettings {
     // TODO: https://github.com/glfw/glfw/blob/master/examples/sharing.c
 public:
-    WindowSettings() {
-      std::cout << "WindowSettings::WindowSettings()" << std::endl;
-    }
+    WindowSettings() = default;
 
-    ~WindowSettings() {
-      std::cout << "WindowSettings::~WindowSettings()" << std::endl;
-    }
+    virtual ~WindowSettings() = default;
 
     void use() const {
       glfwDefaultWindowHints();
@@ -78,15 +74,10 @@ private:
 
 class Window : public WindowSettings {
 public:
-    Window()
-    : Window(WindowSettings())
-    {
-      std::cout << "Window::Window()" << std::endl;
-    }
+    Window() : Window(WindowSettings{}) {};
 
     explicit Window(const WindowSettings& settings)
-    : window{std::unique_ptr<GLFWwindow, decltype(&GLFWwindow_destroyer)>(GLFWwindow_constructor(settings),
-                                                                          &GLFWwindow_destroyer)} {
+    : window{std::unique_ptr<GLFWwindow, decltype(&GLFWwindow_destroyer)>(GLFWwindow_constructor(settings), &GLFWwindow_destroyer)} {
       std::cout << "Window::Window(const WindowSettings&)" << std::endl;
       if (!window) {
         const char *description = "No error";
@@ -98,8 +89,11 @@ public:
       glfwSwapInterval(1);
     }
 
-    Window(Window&& w)
-      : window{std::move(w.window)} {
+    explicit Window(const Window& w)
+    : window{w.window} {}
+
+    Window(Window&& w) noexcept
+    : window{std::move(w.window)} {
       std::cout << "Window::Window(Window&&)" << std::endl;
 
       //w.use();
@@ -117,11 +111,6 @@ public:
     }
 
     ~Window() {
-      std::cout<<"Window::~Window()"<<std::endl;
-      if (window) {
-        glfwDestroyWindow(window.get());
-        window = nullptr;
-      }
     }
 
     [[nodiscard]] GLFWwindow *get() const {
@@ -146,5 +135,5 @@ private:
       //  glfwDestroyWindow(window);
     }
 
-    std::unique_ptr<GLFWwindow, decltype(&GLFWwindow_destroyer)> window;
+    std::shared_ptr<GLFWwindow> window;
 };

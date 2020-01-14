@@ -3,24 +3,23 @@
 class Game {
 public:
     Game()
-    : Game{Window{}} // crashes because somewhere Window destructor called
-    //: window{} // works
-    {
+    : Game{Window{}} {
       std::cout << "Game::Game()" << std::endl;
     }
 
-    explicit Game(Window&& window)
-    : window(std::move(window))
-    {
+    explicit Game(const Window& window)
+    : window(window) {
       std::cout << "Game::Game(Window)" << std::endl;
     }
 
-    virtual ~Game() {
-      std::cout << "Game::~Game()" << std::endl;
-    };
+    explicit Game(Window&& window)
+    : window(std::move(window)) {
+      std::cout << "Game::Game(Window)" << std::endl;
+    }
 
-    int run() {
-      std::cout << "Game::run()" << std::endl;
+    virtual ~Game() = default;
+
+    virtual int run() {
       while (window) {
         update();
       }

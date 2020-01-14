@@ -19,7 +19,8 @@ public:
       std::cout << "PonyGame::PonyGame()" << std::endl;
     }
 
-    PonyGame(const Window &w) {
+    explicit PonyGame(Window w)
+    : Game(std::move(w)) {
       std::cout << "PonyGame::PonyGame(const Window &)" << std::endl;
 
       GLuint vertex_buffer;
@@ -67,10 +68,6 @@ public:
 
       glfwSwapBuffers(window.get());
       glfwPollEvents();
-    }
-
-    void physics_update() override {
-
     }
 
 private:
