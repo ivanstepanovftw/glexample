@@ -14,7 +14,7 @@ pacman -S cmake glfw-x11 libepoxy glm
 
 apt:
 ```
-apt install cmake libglfw3 libglm-dev
+apt install cmake libglfw3 libepoxy-dev libglm-dev
 ```
 
 Reproducer:
