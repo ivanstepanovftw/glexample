@@ -14,8 +14,13 @@ static const struct {
 
 class PonyGame : public Game {
 public:
-    PonyGame() {
+    PonyGame()
+    : PonyGame{Window{}} {
       std::cout << "PonyGame::PonyGame()" << std::endl;
+    }
+
+    PonyGame(const Window &w) {
+      std::cout << "PonyGame::PonyGame(const Window &)" << std::endl;
 
       GLuint vertex_buffer;
       glGenBuffers(1, &vertex_buffer);
@@ -103,35 +108,40 @@ struct Derived : public Base {
 };
 
 int main(int argc, char *argv[]) {
-  {
-    Derived d;
-  }
-  std::cout << "------------------------" << std::endl;
-  std::cout << std::endl;
-  //return 0;
-
-  {
-    Base b;
-    Derived d(b);
-  }
-  std::cout << "------------------------" << std::endl;
-  std::cout << std::endl;
-  //return 0;
-
-  {
-    PonyGame myPony;
-    //myPony.run();
-  }
-  std::cout << "------------------------" << std::endl;
-  std::cout << std::endl;
-  //return 0;
+  //{
+  //  Derived d;
+  //}
+  //std::cout << "------------------------" << std::endl;
+  //std::cout << std::endl;
+  ////return 0;
+  //
+  //{
+  //  Base b;
+  //  Derived d(b);
+  //}
+  //std::cout << "------------------------" << std::endl;
+  //std::cout << std::endl;
+  ////return 0;
 
   {
     PonyGame myPony;
-    //myPony.run();
+    myPony.run();
   }
   std::cout << "------------------------" << std::endl;
   std::cout << std::endl;
+  //return 0;
+
+  //{
+  //  WindowSettings ws;
+  //  ws.setTitle("Hello world")
+  //    .setWidth(900);
+  //  Window w(ws);
+  //  ws.setHeight(2);
+  //  PonyGame myPony(w);
+  //  myPony.run();
+  //}
+  //std::cout << "------------------------" << std::endl;
+  //std::cout << std::endl;
   //return 0;
 
   //WindowSettings ws;

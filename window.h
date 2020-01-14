@@ -9,6 +9,7 @@
 #include "exceptions.h"
 #include <string>
 #include <utility>
+#include <memory>
 
 static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
@@ -46,24 +47,27 @@ public:
       return m_width;
     }
 
-    void setWidth(int width) {
+    WindowSettings &setWidth(int width) {
       m_width = width;
+      return *this;
     }
 
     [[nodiscard]] int getHeight() const {
       return m_height;
     }
 
-    void setHeight(int height) {
+    WindowSettings &setHeight(int height) {
       m_height = height;
+      return *this;
     }
 
     [[nodiscard]] const std::string &getTitle() const {
       return m_title;
     }
 
-    void setTitle(const std::string &title) {
+    WindowSettings &setTitle(const std::string &title) {
       m_title = title;
+      return *this;
     }
 
 private:
@@ -80,38 +84,67 @@ public:
       std::cout << "Window::Window()" << std::endl;
     }
 
-    explicit Window(const WindowSettings& settings) {
+    explicit Window(const WindowSettings& settings)
+    : window{std::unique_ptr<GLFWwindow, decltype(&GLFWwindow_destroyer)>(GLFWwindow_constructor(settings),
+                                                                          &GLFWwindow_destroyer)} {
       std::cout << "Window::Window(const WindowSettings&)" << std::endl;
-
-      settings.use();
-      window = glfwCreateWindow(settings.getWidth(), settings.getHeight(),
-                                settings.getTitle().c_str(), settings.getMonitor(), nullptr);
       if (!window) {
         const char *description = "No error";
         glfwGetError(&description);
         throw WindowException("Unable to create GL window: " + std::string(description));
       }
 
-      glfwMakeContextCurrent(window);
+      glfwMakeContextCurrent(window.get());
+      glfwSwapInterval(1);
+    }
+
+    Window(Window&& w)
+      : window{std::move(w.window)} {
+      std::cout << "Window::Window(Window&&)" << std::endl;
+
+      //w.use();
+      //window = glfwCreateWindow(w.getWidth(), w.getHeight(),
+      //                          w.getTitle().c_str(), w.getMonitor(), nullptr);
+      //if (!window) {
+      //  const char *description = "No error";
+      //  glfwGetError(&description);
+      //  throw WindowException("Unable to create GL window: " + std::string(description));
+      //}
+      //
+      //window = w.window;
+      glfwMakeContextCurrent(window.get());
       glfwSwapInterval(1);
     }
 
     ~Window() {
       std::cout<<"Window::~Window()"<<std::endl;
       if (window) {
-        glfwDestroyWindow(window);
+        glfwDestroyWindow(window.get());
         window = nullptr;
       }
     }
 
     [[nodiscard]] GLFWwindow *get() const {
-      return window;
+      return window.get();
     };
 
     explicit operator bool() const {
-      return !glfwWindowShouldClose(window);
+      return !glfwWindowShouldClose(window.get());
     }
 
 private:
-    GLFWwindow *window = nullptr;
+    static GLFWwindow *GLFWwindow_constructor(const WindowSettings& settings) {
+      std::cout << "! GLFWwindow_constructor" << std::endl;
+      settings.use();
+      return glfwCreateWindow(settings.getWidth(), settings.getHeight(),
+                              settings.getTitle().c_str(), settings.getMonitor(), nullptr);
+    }
+
+    static void GLFWwindow_destroyer(GLFWwindow *window) {
+      std::cout<<"! GLFWwindow_destroyer"<<std::endl;
+      //if (window)
+      //  glfwDestroyWindow(window);
+    }
+
+    std::unique_ptr<GLFWwindow, decltype(&GLFWwindow_destroyer)> window;
 };

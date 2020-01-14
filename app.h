@@ -9,10 +9,10 @@ public:
       std::cout << "Game::Game()" << std::endl;
     }
 
-    explicit Game(const Window& window)
-    : window(window)
+    explicit Game(Window&& window)
+    : window(std::move(window))
     {
-      std::cout << "Game::Game(const Window&)" << std::endl;
+      std::cout << "Game::Game(Window)" << std::endl;
     }
 
     virtual ~Game() {
