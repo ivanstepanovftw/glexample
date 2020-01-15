@@ -1,6 +1,6 @@
-#include "app.h"
-#include "assets.h"
-#include "shader.h"
+#include "lib/include/game.h"
+#include "lib/include/assets.h"
+#include "lib/include/shader.h"
 
 static const struct {
     float x, y;
@@ -19,9 +19,32 @@ public:
       std::cout << "PonyGame::PonyGame()" << std::endl;
     }
 
-    explicit PonyGame(Window w)
-    : Game(std::move(w)) {
+    explicit PonyGame(const Window& w)
+    : Game(w) {
       std::cout << "PonyGame::PonyGame(const Window &)" << std::endl;
+
+      GLuint vertex_buffer;
+      glGenBuffers(1, &vertex_buffer);
+      glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
+      glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+      s = new Shader("triangle");
+
+      mvp_location = s->uniform("MVP");
+      vpos_location = s->attrib("vPos");
+      vcol_location = s->attrib("vCol");
+
+      glEnableVertexAttribArray(vpos_location);
+      glVertexAttribPointer(vpos_location, 2, GL_FLOAT, GL_FALSE,
+                            sizeof(vertices[0]), (void *) nullptr);
+      glEnableVertexAttribArray(vcol_location);
+      glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE,
+                            sizeof(vertices[0]), (void *) (sizeof(float) * 2));
+    }
+
+    explicit PonyGame(Window&& w)
+    : Game(std::move(w)) {
+      std::cout << "PonyGame::PonyGame(Window&&)" << std::endl;
 
       GLuint vertex_buffer;
       glGenBuffers(1, &vertex_buffer);
@@ -76,71 +99,27 @@ private:
 };
 
 
-struct Base {
-    Base() {
-      std::cout << "Base::Base()" << std::endl;
-    }
-
-    virtual ~Base() {
-      std::cout << "Base::~Base()" << std::endl;
-    }
-};
-
-struct Derived : public Base {
-    Derived()
-    : Derived(Base()){
-      std::cout << "Derived::Derived()" << std::endl;
-    }
-
-    explicit Derived(const Base &base) {
-      std::cout << "Derived::Derived(const Base &)" << std::endl;
-      this->base = base;
-    }
-
-    ~Derived() override {
-      std::cout << "Derived::~Derived()" << std::endl;
-    }
-
-    Base base;
-};
-
 int main(int argc, char *argv[]) {
-  //todo: https://github.com/glfw/glfw/blob/master/examples/sharing.c
 
   //{
-  //  Derived d;
-  //}
-  //std::cout << "------------------------" << std::endl;
-  //std::cout << std::endl;
-  ////return 0;
-  //
-  //{
-  //  Base b;
-  //  Derived d(b);
+  //  PonyGame myPony;
+  //  myPony.run();
   //}
   //std::cout << "------------------------" << std::endl;
   //std::cout << std::endl;
   ////return 0;
 
   {
-    PonyGame myPony;
+    WindowSettings ws;
+    ws.setTitle("Hello world")
+      .setWidth(900);
+    Window w(ws);
+    ws.setHeight(2);
+    PonyGame myPony(w);
     myPony.run();
   }
   std::cout << "------------------------" << std::endl;
   std::cout << std::endl;
-  //return 0;
-
-  //{
-  //  WindowSettings ws;
-  //  ws.setTitle("Hello world")
-  //    .setWidth(900);
-  //  Window w(ws);
-  //  ws.setHeight(2);
-  //  PonyGame myPony(w);
-  //  myPony.run();
-  //}
-  //std::cout << "------------------------" << std::endl;
-  //std::cout << std::endl;
   //return 0;
 
   //WindowSettings ws;

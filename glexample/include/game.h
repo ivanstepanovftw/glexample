@@ -1,4 +1,4 @@
-#include "window.h"
+#include <glexample/window.h>
 
 class Game {
 public:
@@ -9,15 +9,18 @@ public:
 
     explicit Game(const Window& window)
     : window(window) {
-      std::cout << "Game::Game(Window)" << std::endl;
+      std::cout << "Game::Game(const Window&)" << std::endl;
     }
 
     explicit Game(Window&& window)
     : window(std::move(window)) {
-      std::cout << "Game::Game(Window)" << std::endl;
+      std::cout << "Game::Game(Window&&)" << std::endl;
     }
 
-    virtual ~Game() = default;
+    //virtual ~Game() = default;
+    virtual ~Game() {
+      std::cout << "Game::~Game()" << std::endl;
+    }
 
     virtual int run() {
       while (window) {

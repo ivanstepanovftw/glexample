@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "getopt.h"
-#include "linmath.h"
+#include "lib/include/linmath.h"
 
 static const char* vertex_shader_text =
         "#version 110\n"

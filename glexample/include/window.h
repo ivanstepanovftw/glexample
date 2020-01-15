@@ -4,9 +4,8 @@
 
 #pragma once
 
-#include "init.h"
-#include "linmath.h"
-#include "exceptions.h"
+#include <glexample/linmath.h>
+#include <glexample/exceptions.h>
 #include <string>
 #include <utility>
 #include <memory>
@@ -72,13 +71,22 @@ private:
     std::string m_title = "Window Title";
 };
 
+
+static size_t counter = 0;
+
+
 class Window : public WindowSettings {
 public:
-    Window() : Window(WindowSettings{}) {};
+    size_t c;
+
+    Window()
+    : Window(WindowSettings{}) {
+      std::cout<<"Window::Window(), c: " << c << std::endl;
+    };
 
     explicit Window(const WindowSettings& settings)
-    : window{std::unique_ptr<GLFWwindow, decltype(&GLFWwindow_destroyer)>(GLFWwindow_constructor(settings), &GLFWwindow_destroyer)} {
-      std::cout << "Window::Window(const WindowSettings&)" << std::endl;
+    : c{counter++}, window{std::unique_ptr<GLFWwindow, decltype(&GLFWwindow_destroyer)>(GLFWwindow_constructor(settings), &GLFWwindow_destroyer)} {
+      std::cout << "Window::Window(const WindowSettings&), c: " << c << std::endl;
       if (!window) {
         const char *description = "No error";
         glfwGetError(&description);
@@ -91,12 +99,24 @@ public:
 
     // todo: надо ли?
     explicit Window(const Window& w)
-    : window{w.window} {}
+    : c{counter++}, window{w.window} {
+      std::cout << "Window::Window(const Window&), c: " << c << std::endl;
+    }
 
     Window(Window&& w) noexcept
-    : window{std::move(w.window)} {}
+    : c{counter++}, window{std::move(w.window)} {
+      std::cout << "Window::Window(Window&&), c: " << c << std::endl;
+    }
 
-    virtual ~Window() = default;
+    Window(Window w) noexcept
+    : c{counter++}, window{std::move(w.window)} {
+      std::cout << "Window::Window(Window&&), c: " << c << std::endl;
+    }
+
+    //virtual ~Window() = default;
+    virtual ~Window() {
+      std::cout << "Window::~Window(), c: "<< c << std::endl;
+    }
 
     [[nodiscard]] GLFWwindow *get() const {
       return window.get();

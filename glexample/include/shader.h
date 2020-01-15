@@ -10,7 +10,7 @@
 #include <fstream>
 #include <sstream>
 #include <filesystem>
-#include "assets.h"
+#include <glexample/assets.h>
 
 // TODO: remove
 namespace fs = std::filesystem;

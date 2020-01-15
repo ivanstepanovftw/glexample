@@ -25,5 +25,3 @@ public:
       glfwTerminate();
     }
 };
-
-static GLFWInit _glfwinit;
