@@ -89,29 +89,14 @@ public:
       glfwSwapInterval(1);
     }
 
+    // todo: надо ли?
     explicit Window(const Window& w)
     : window{w.window} {}
 
     Window(Window&& w) noexcept
-    : window{std::move(w.window)} {
-      std::cout << "Window::Window(Window&&)" << std::endl;
+    : window{std::move(w.window)} {}
 
-      //w.use();
-      //window = glfwCreateWindow(w.getWidth(), w.getHeight(),
-      //                          w.getTitle().c_str(), w.getMonitor(), nullptr);
-      //if (!window) {
-      //  const char *description = "No error";
-      //  glfwGetError(&description);
-      //  throw WindowException("Unable to create GL window: " + std::string(description));
-      //}
-      //
-      //window = w.window;
-      glfwMakeContextCurrent(window.get());
-      glfwSwapInterval(1);
-    }
-
-    ~Window() {
-    }
+    virtual ~Window() = default;
 
     [[nodiscard]] GLFWwindow *get() const {
       return window.get();
@@ -131,8 +116,8 @@ private:
 
     static void GLFWwindow_destroyer(GLFWwindow *window) {
       std::cout<<"! GLFWwindow_destroyer"<<std::endl;
-      //if (window)
-      //  glfwDestroyWindow(window);
+      if (window)
+        glfwDestroyWindow(window);
     }
 
     std::shared_ptr<GLFWwindow> window;

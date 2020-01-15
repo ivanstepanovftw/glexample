@@ -105,6 +105,8 @@ struct Derived : public Base {
 };
 
 int main(int argc, char *argv[]) {
+  //todo: https://github.com/glfw/glfw/blob/master/examples/sharing.c
+
   //{
   //  Derived d;
   //}
