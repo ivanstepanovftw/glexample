@@ -12,33 +12,6 @@
 namespace fs = std::filesystem;
 
 
-//using AssetManager0 = std::vector<std::filesystem::path>;
-//
-//
-//class AssetManager1 : public std::vector<std::filesystem::path> {
-//    using std::vector<std::filesystem::path>::vector;
-//public:
-//    [[nodiscard]] bool isValid() const {
-//      for (const auto& a : *this) {
-//        if (!fs::exists(a))
-//          return false;
-//      }
-//      return true;
-//    }
-//
-//    void setRecursive(bool enable) {
-//
-//    }
-//
-//    fs::path find(const std::string& filename) const {
-//
-//    }
-//
-//private:
-//
-//};
-
-
 class AssetManager {
 public:
     AssetManager() noexcept

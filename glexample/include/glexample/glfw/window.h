@@ -18,12 +18,15 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
     glfwSetWindowShouldClose(window, GLFW_TRUE);
 }
 
-class WindowSettings {
-    // TODO: https://github.com/glfw/glfw/blob/master/examples/sharing.c
+class WindowHints {
+    GLFWmonitor *m_monitor = nullptr;
+    GLFWwindow *m_share = nullptr;
+    int m_width = 640, m_height = 480;
+    std::string m_title = "Window Title";
 public:
-    WindowSettings() = default;
+    WindowHints() = default;
 
-    virtual ~WindowSettings() = default;
+    virtual ~WindowHints() = default;
 
     void use() const {
       glfwDefaultWindowHints();
@@ -36,8 +39,17 @@ public:
       return m_monitor;
     }
 
-    WindowSettings& setMonitor(GLFWmonitor *monitor) {
+    WindowHints& setMonitor(GLFWmonitor *monitor) {
       m_monitor = monitor;
+      return *this;
+    }
+
+    [[nodiscard]] GLFWwindow *getShare() const {
+      return m_share;
+    }
+
+    WindowHints& setShare(GLFWwindow *share) {
+      m_share = share;
       return *this;
     }
 
@@ -45,7 +57,7 @@ public:
       return m_width;
     }
 
-    WindowSettings &setWidth(int width) {
+    WindowHints &setWidth(int width) {
       m_width = width;
       return *this;
     }
@@ -54,7 +66,7 @@ public:
       return m_height;
     }
 
-    WindowSettings &setHeight(int height) {
+    WindowHints &setHeight(int height) {
       m_height = height;
       return *this;
     }
@@ -63,33 +75,33 @@ public:
       return m_title;
     }
 
-    WindowSettings &setTitle(const std::string &title) {
+    WindowHints &setTitle(const std::string &title) {
       m_title = title;
       return *this;
     }
-
-private:
-    GLFWmonitor *m_monitor = nullptr;
-    int m_width = 640, m_height = 480;
-    std::string m_title = "Window Title";
 };
 
 
-static size_t counter = 0;
-
-
 class Window {
+    std::shared_ptr<GLFWwindow> window;
+
+    static GLFWwindow *GLFWwindow_constructor(const WindowHints &hints) {
+      hints.use();
+      GLFWwindow *ret = glfwCreateWindow(hints.getWidth(), hints.getHeight(),
+                                         hints.getTitle().c_str(), hints.getMonitor(), hints.getShare());
+      return ret;
+    }
+
+    static void GLFWwindow_destroyer(GLFWwindow *window) {
+      glfwDestroyWindow(window);
+    }
+
 public:
-    size_t c;
-
     Window()
-    : Window(WindowSettings{}) {
-      std::cout<<"Window::Window(), c: " << c << std::endl;
-    };
+    : Window(WindowHints{}) {};
 
-    explicit Window(const WindowSettings& settings)
-    : c{counter++}, window{std::unique_ptr<GLFWwindow, decltype(&GLFWwindow_destroyer)>(GLFWwindow_constructor(settings), &GLFWwindow_destroyer)} {
-      std::cout << "Window::Window(const WindowSettings&), c: " << c << std::endl;
+    explicit Window(const WindowHints& hint)
+    : window{std::unique_ptr<GLFWwindow, decltype(&GLFWwindow_destroyer)>(GLFWwindow_constructor(hint), &GLFWwindow_destroyer)} {
       if (!window) {
         const char *description = "No error";
         glfwGetError(&description);
@@ -100,26 +112,15 @@ public:
       glfwSwapInterval(1);
     }
 
-    // todo: надо ли?
-    //explicit Window(const Window& w)
-    //: c{counter++}, window{w.window} {
-    //  std::cout << "Window::Window(const Window&), c: " << c << std::endl;
-    //}
+    virtual ~Window() = default;
 
-    Window(Window&& w) noexcept
-    : c{counter++}, window{std::move(w.window)} {
-      std::cout << "Window::Window(Window&&), c: " << c << std::endl;
-    }
+    // move constructor
+    Window(Window&& other) noexcept
+    : window{std::move(other.window)} {}
 
-    //Window(Window w) noexcept
-    //: c{counter++}, window{std::move(w.window)} {
-    //  std::cout << "Window::Window(Window&&), c: " << c << std::endl;
-    //}
-
-    //virtual ~Window() = default;
-    virtual ~Window() {
-      std::cout << "Window::~Window(), c: "<< c << std::endl;
-    }
+    // copy constructor
+    Window(const Window& other)
+    : window{other.window} {}
 
     [[nodiscard]] GLFWwindow *get() const {
       return window.get();
@@ -128,24 +129,4 @@ public:
     explicit operator bool() const {
       return !glfwWindowShouldClose(window.get());
     }
-
-private:
-    static GLFWwindow *GLFWwindow_constructor(const WindowSettings& settings) {
-      std::cout << "! GLFWwindow_constructor" << std::endl;
-      settings.use();
-      GLFWwindow *ret = glfwCreateWindow(settings.getWidth(), settings.getHeight(),
-                              settings.getTitle().c_str(), settings.getMonitor(), nullptr);
-                              //settings.getTitle().c_str(), glfwGetPrimaryMonitor(), nullptr);
-      glfwSetWindowMonitor(ret, glfwGetPrimaryMonitor(), 0,0,500, 600, 60);
-      return ret;
-    }
-
-    static void GLFWwindow_destroyer(GLFWwindow *window) {
-      std::cout<<"! GLFWwindow_destroyer"<<std::endl;
-      if (window)
-        glfwDestroyWindow(window);
-    }
-
-    //std::vector<std::shared_ptr<GLFWwindow>> windows;
-    std::shared_ptr<GLFWwindow> window;
 };

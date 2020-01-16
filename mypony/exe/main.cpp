@@ -1,6 +1,6 @@
 #include <glexample/game.h>
 #include <glexample/assets.h>
-#include <glexample/shader.h>
+#include <glexample/gl/shader.h>
 #include <GLFW/glfw3.h>
 
 static const struct {
@@ -16,14 +16,10 @@ static const struct {
 class PonyGame : public Game {
 public:
     PonyGame()
-    : PonyGame{Window{}} {
-      std::cout << "PonyGame::PonyGame()" << std::endl;
-    }
+    : PonyGame{Window{}} {}
 
     explicit PonyGame(Window&& w)
     : Game(std::move(w)) {
-      std::cout << "PonyGame::PonyGame(Window&&)" << std::endl;
-
       GLuint vertex_buffer;
       glGenBuffers(1, &vertex_buffer);
       glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
@@ -43,11 +39,9 @@ public:
                             sizeof(vertices[0]), (void *) (sizeof(float) * 2));
     }
 
-    ~PonyGame() override {
-      std::cout << "PonyGame::~PonyGame()" << std::endl;
-    }
+    ~PonyGame() override = default;
 
-    void update() override {
+    void render() override {
       float ratio;
       int width, height;
       mat4x4 m, p, mvp;
@@ -78,55 +72,17 @@ private:
 
 
 int main(int argc, char *argv[]) {
-  //assetManager
+
   {
-    int monitors_count;
-    GLFWmonitor **monitors = glfwGetMonitors(&monitors_count);
-    std::cout << "monitors: " << monitors_count << std::endl;
-
-    for (size_t i = 0; i < monitors_count; i++) {
-      GLFWmonitor *monitor = *(monitors + i);
-      std::cout << "monitor: " << glfwGetMonitorName(monitor) << std::endl;
-
-      int modes_count;
-      const GLFWvidmode *modes = glfwGetVideoModes(monitor, &modes_count);
-      const GLFWvidmode *current_mode = glfwGetVideoMode(monitor);
-      std::cout << "modes: " << modes_count << std::endl;
-
-      for (size_t j = 0; j < modes_count; j++) {
-        const GLFWvidmode mode = *(modes + j);
-        std::cout << (current_mode == &mode ? "*" : "") << "mode: "
-                  << "redBits: " << mode.redBits
-                  << ", greenBits: " << mode.greenBits
-                  << ", blueBits: " << mode.blueBits
-                  << ", width: " << mode.width << ", height: " << mode.height
-                  << ", refreshRate: " << mode.refreshRate << std::endl;
-      }
-
-      int width_mm, height_mm;
-      glfwGetMonitorPhysicalSize(monitor, &width_mm, &height_mm);
-      std::cout<<"width_mm: "<<width_mm<<", height_mm: "<<height_mm<<std::endl;
-
-      float xscale, yscale;
-      glfwGetMonitorContentScale(monitor, &xscale, &yscale);
-      std::cout<<"xscale: "<<xscale<<", yscale: "<<yscale<<std::endl;
-
-      int xpos, ypos, width, height;
-      glfwGetMonitorWorkarea(monitor, &xpos, &ypos, &width, &height);
-      std::cout<<"xpos: "<<xpos<<", ypos: "<<ypos<<", width: "<<width<<", height: "<<height<<std::endl;
-    }
+    PonyGame myPony;
+    myPony.run();
   }
+  std::cout << "------------------------" << std::endl;
+  std::cout << std::endl;
+  //return 0;
 
   //{
-  //  PonyGame myPony;
-  //  myPony.run();
-  //}
-  //std::cout << "------------------------" << std::endl;
-  //std::cout << std::endl;
-  ////return 0;
-
-  //{
-  //  WindowSettings ws;
+  //  WindowHints ws;
   //  ws.setTitle("Hello world")
   //    .setWidth(900);
   //  Window w(ws);
@@ -138,7 +94,7 @@ int main(int argc, char *argv[]) {
   //std::cout << std::endl;
   ////return 0;
 
-  //WindowSettings ws;
+  //WindowHints ws;
   //ws.setMonitor(nullptr)
   //  .setTitle("Window Title");
   //std::cout << std::endl;

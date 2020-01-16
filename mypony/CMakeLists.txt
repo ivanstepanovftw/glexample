@@ -15,6 +15,7 @@ target_compile_options(myapp PRIVATE
         -Wall
         -Werror
         -Wpedantic
+        -Wno-error=unused
         -Wno-error=unused-function
         -Wno-error=sign-compare
         )
