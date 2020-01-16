@@ -134,8 +134,8 @@ private:
       std::cout << "! GLFWwindow_constructor" << std::endl;
       settings.use();
       GLFWwindow *ret = glfwCreateWindow(settings.getWidth(), settings.getHeight(),
-                              //settings.getTitle().c_str(), settings.getMonitor(), nullptr);
-                              settings.getTitle().c_str(), glfwGetPrimaryMonitor(), nullptr);
+                              settings.getTitle().c_str(), settings.getMonitor(), nullptr);
+                              //settings.getTitle().c_str(), glfwGetPrimaryMonitor(), nullptr);
       glfwSetWindowMonitor(ret, glfwGetPrimaryMonitor(), 0,0,500, 600, 60);
       return ret;
     }

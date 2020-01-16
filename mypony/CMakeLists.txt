@@ -16,6 +16,7 @@ target_compile_options(myapp PRIVATE
         -Werror
         -Wpedantic
         -Wno-error=unused-function
+        -Wno-error=sign-compare
         )
 target_include_directories(myapp
         PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
