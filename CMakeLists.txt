@@ -10,4 +10,4 @@ include(GNUInstallDirs)
 #include(${CMAKE_SOURCE_DIR}/cmake/versioning.cmake)
 
 add_subdirectory(glexample)
-#add_subdirectory(mypony)
+add_subdirectory(mypony)

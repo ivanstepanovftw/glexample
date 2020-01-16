@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include <epoxy/gl.h>
-#define GLFW_INCLUDE_NONE
+//#include <epoxy/gl.h>
+//#define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include <cstdlib>
+//#include <cstdlib>
 #include <iostream>
 
 class GLFWInit {

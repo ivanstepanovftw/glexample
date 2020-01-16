@@ -1,3 +1,4 @@
+project(mypony)
 
 set(CMAKE_CXX_STANDARD 20)
 find_package(LibEpoxy REQUIRED)
@@ -6,7 +7,7 @@ find_package(OpenGL REQUIRED)
 find_package(glm REQUIRED)
 find_package(Threads REQUIRED)
 
-add_executable(myapp src/main.cpp)
+add_executable(myapp exe/main.cpp)
 target_compile_options(myapp PRIVATE
         -O0
         -g3
@@ -18,8 +19,8 @@ target_compile_options(myapp PRIVATE
         )
 target_include_directories(myapp
         PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
-        ${BOOST_INCLUDE_DIR}
-        ${OPENGL_INCLUDE_DIR}
+                ${BOOST_INCLUDE_DIR}
+                ${OPENGL_INCLUDE_DIR}
         )
 target_link_libraries(myapp
         glfw
@@ -28,21 +29,5 @@ target_link_libraries(myapp
         epoxy
         glm
         Threads::Threads
+        glexample
         )
-
-
-add_executable(scratch src/scratch.cpp)
-target_include_directories(scratch
-        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
-        ${BOOST_INCLUDE_DIR}
-        ${OPENGL_INCLUDE_DIR}
-        )
-target_link_libraries(scratch
-        glexample/include/glfw
-        GL
-        ${OPENGL_gl_LIBRARY}
-        epoxy
-        glm
-        Threads::Threads
-        )
-

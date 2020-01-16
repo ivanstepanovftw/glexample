@@ -1,15 +1,12 @@
-#include <glexample/window.h>
+#pragma once
+
+#include <glexample/glfw/window.h>
 
 class Game {
 public:
     Game()
     : Game{Window{}} {
       std::cout << "Game::Game()" << std::endl;
-    }
-
-    explicit Game(const Window& window)
-    : window(window) {
-      std::cout << "Game::Game(const Window&)" << std::endl;
     }
 
     explicit Game(Window&& window)

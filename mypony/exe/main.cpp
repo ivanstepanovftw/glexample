@@ -1,6 +1,6 @@
-#include "lib/include/game.h"
-#include "lib/include/assets.h"
-#include "lib/include/shader.h"
+#include <glexample/game.h>
+#include <glexample/assets.h>
+#include <glexample/shader.h>
 
 static const struct {
     float x, y;
@@ -17,29 +17,6 @@ public:
     PonyGame()
     : PonyGame{Window{}} {
       std::cout << "PonyGame::PonyGame()" << std::endl;
-    }
-
-    explicit PonyGame(const Window& w)
-    : Game(w) {
-      std::cout << "PonyGame::PonyGame(const Window &)" << std::endl;
-
-      GLuint vertex_buffer;
-      glGenBuffers(1, &vertex_buffer);
-      glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-      glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-      s = new Shader("triangle");
-
-      mvp_location = s->uniform("MVP");
-      vpos_location = s->attrib("vPos");
-      vcol_location = s->attrib("vCol");
-
-      glEnableVertexAttribArray(vpos_location);
-      glVertexAttribPointer(vpos_location, 2, GL_FLOAT, GL_FALSE,
-                            sizeof(vertices[0]), (void *) nullptr);
-      glEnableVertexAttribArray(vcol_location);
-      glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE,
-                            sizeof(vertices[0]), (void *) (sizeof(float) * 2));
     }
 
     explicit PonyGame(Window&& w)
@@ -100,14 +77,15 @@ private:
 
 
 int main(int argc, char *argv[]) {
+  //assetManager
 
-  //{
-  //  PonyGame myPony;
-  //  myPony.run();
-  //}
-  //std::cout << "------------------------" << std::endl;
-  //std::cout << std::endl;
-  ////return 0;
+  {
+    PonyGame myPony;
+    myPony.run();
+  }
+  std::cout << "------------------------" << std::endl;
+  std::cout << std::endl;
+  //return 0;
 
   {
     WindowSettings ws;
@@ -115,12 +93,12 @@ int main(int argc, char *argv[]) {
       .setWidth(900);
     Window w(ws);
     ws.setHeight(2);
-    PonyGame myPony(w);
+    PonyGame myPony(std::move(w));
     myPony.run();
   }
-  std::cout << "------------------------" << std::endl;
-  std::cout << std::endl;
-  //return 0;
+  //std::cout << "------------------------" << std::endl;
+  //std::cout << std::endl;
+  ////return 0;
 
   //WindowSettings ws;
   //ws.setMonitor(nullptr)

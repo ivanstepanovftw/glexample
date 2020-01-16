@@ -7,8 +7,11 @@
 #include <glexample/linmath.h>
 #include <glexample/exceptions.h>
 #include <string>
+#include <iostream>
 #include <utility>
 #include <memory>
+#include <glexample/glfw/init.h>
+#include <vector>
 
 static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
@@ -75,7 +78,7 @@ private:
 static size_t counter = 0;
 
 
-class Window : public WindowSettings {
+class Window {
 public:
     size_t c;
 
@@ -98,20 +101,20 @@ public:
     }
 
     // todo: надо ли?
-    explicit Window(const Window& w)
-    : c{counter++}, window{w.window} {
-      std::cout << "Window::Window(const Window&), c: " << c << std::endl;
-    }
+    //explicit Window(const Window& w)
+    //: c{counter++}, window{w.window} {
+    //  std::cout << "Window::Window(const Window&), c: " << c << std::endl;
+    //}
 
     Window(Window&& w) noexcept
     : c{counter++}, window{std::move(w.window)} {
       std::cout << "Window::Window(Window&&), c: " << c << std::endl;
     }
 
-    Window(Window w) noexcept
-    : c{counter++}, window{std::move(w.window)} {
-      std::cout << "Window::Window(Window&&), c: " << c << std::endl;
-    }
+    //Window(Window w) noexcept
+    //: c{counter++}, window{std::move(w.window)} {
+    //  std::cout << "Window::Window(Window&&), c: " << c << std::endl;
+    //}
 
     //virtual ~Window() = default;
     virtual ~Window() {
@@ -130,8 +133,11 @@ private:
     static GLFWwindow *GLFWwindow_constructor(const WindowSettings& settings) {
       std::cout << "! GLFWwindow_constructor" << std::endl;
       settings.use();
-      return glfwCreateWindow(settings.getWidth(), settings.getHeight(),
-                              settings.getTitle().c_str(), settings.getMonitor(), nullptr);
+      GLFWwindow *ret = glfwCreateWindow(settings.getWidth(), settings.getHeight(),
+                              //settings.getTitle().c_str(), settings.getMonitor(), nullptr);
+                              settings.getTitle().c_str(), glfwGetPrimaryMonitor(), nullptr);
+      glfwSetWindowMonitor(ret, glfwGetPrimaryMonitor(), 0,0,500, 600, 60);
+      return ret;
     }
 
     static void GLFWwindow_destroyer(GLFWwindow *window) {
@@ -140,5 +146,6 @@ private:
         glfwDestroyWindow(window);
     }
 
+    //std::vector<std::shared_ptr<GLFWwindow>> windows;
     std::shared_ptr<GLFWwindow> window;
 };
