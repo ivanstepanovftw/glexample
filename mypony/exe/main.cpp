@@ -1,6 +1,6 @@
 #include <glexample/game.h>
 #include <glexample/assets.h>
-#include <glexample/gl/shader.h>
+#include <glexample/shader.h>
 #include <GLFW/glfw3.h>
 
 static const struct {

@@ -17,7 +17,7 @@ apt:
 apt install cmake libglfw3 libepoxy-dev libglm-dev
 ```
 
-Reproducer:
+Compilation and run:
 ```
 git clone https://github.com/ivanstepanovftw/glexample.git
 cd glexample
@@ -29,6 +29,21 @@ cmake --build . --target myapp -- -j 6
 ./myapp
 ```
 
-Uncomment [app.h:7](https://github.com/ivanstepanovftw/glexample/blob/master/app.h#L7) and comment out [app.h:6](https://github.com/ivanstepanovftw/glexample/blob/master/app.h#L6) to solve bug.
 
-Why is this happen? Why [Window](https://github.com/ivanstepanovftw/glexample/blob/master/window.h#L75) destructs itself?
+
+
+install vcpkg somewere:
+```shell script
+git clone https://github.com/Microsoft/vcpkg.git
+cd vcpkg
+./bootstrap-vcpkg
+./vcpkg integrate install
+
+# TODO:
+#$env:Path += ";SomeRandomPath"
+#vcpkg integrate powershell
+#./vcpkg integrate bash
+```
+
+-DCMAKE_TOOLCHAIN_FILE=C:/Users/ashft/vcpkg/scripts/buildsystems/vcpkg.cmake
+

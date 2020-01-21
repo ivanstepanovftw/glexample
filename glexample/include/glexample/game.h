@@ -5,6 +5,11 @@
 class Game {
     size_t m_limit_fps = 0;
 
+    static void framebuffer_size_callback(GLFWwindow* window, int w, int h) {
+      Game* that = static_cast<Game*>(glfwGetWindowUserPointer(window));
+      that->framebuffer_size_callback(w, h);
+    }
+
     static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
       Game *that = static_cast<Game *>(glfwGetWindowUserPointer(window));
       that->key_callback(key, scancode, action, mods);
@@ -21,6 +26,7 @@ public:
     explicit Game(Window&& other) noexcept
     : window(std::move(other)) {
       glfwSetWindowUserPointer(window.get(), this);
+      //glfwSetFramebufferSizeCallback(window.get(), framebuffer_size_callback);
       glfwSetKeyCallback(window.get(), key_callback);
       // TODO:
       //glfwSetCursorEnterCallback(window.get(), cursor_enter_callback);
@@ -52,5 +58,13 @@ protected:
 
     virtual void render() = 0;
 
+    virtual void framebuffer_size_callback(int w, int h) {
+      glViewport(0, 0, (GLsizei) w, (GLsizei) h);
+      glMatrixMode(GL_PROJECTION);
+      glLoadIdentity();
+      glMatrixMode(GL_MODELVIEW);
+    };
+
     virtual void key_callback(int key, int scancode, int action, int mods) {};
+
 };

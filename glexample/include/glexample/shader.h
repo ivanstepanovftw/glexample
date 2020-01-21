@@ -17,12 +17,16 @@ namespace fs = std::filesystem;
 
 class Shader {
 public:
-    Shader(const std::string& name) {
+    /**
+     * Find Shader from AssetManager.
+     */
+    Shader(const std::string& name)
+    : Shader{assetManager.find(name + ".frag"), assetManager.find(name + ".vert")} {}
 
-      //Get the file paths
-      const fs::path frag = assetManager.find(name + ".frag");
-      const fs::path vert = assetManager.find(name + ".vert");
-
+    /**
+     * Create Shader directly from path.
+     */
+    Shader(const fs::path& frag, const fs::path& vert) {
       //Load the shaders from disk
       fragId = load(frag.c_str(), GL_FRAGMENT_SHADER);
       vertId = load(vert.c_str(), GL_VERTEX_SHADER);
@@ -71,7 +75,7 @@ public:
       glDeleteShader(fragId);
     }
 
-    [[nodiscard]] GLint uniform(const std::string &var) const {
+    [[nodiscard]] GLint uniform(const std::string& var) const {
       return glGetUniformLocation(progId, var.c_str());
     }
 
@@ -89,17 +93,17 @@ public:
     //}
 
 protected:
-    [[nodiscard]] GLuint load(const char *fname, GLenum type) {
+    [[nodiscard]] GLuint load(const char* fname, GLenum type) {
       //Read shader source from disk
       std::ifstream fin(fname);
       std::stringstream buff;
       buff << fin.rdbuf();
       const std::string str = buff.str();
-      const char *source = str.c_str();
+      const char* source = str.c_str();
 
       //Create and compile shader
       const GLuint id = glCreateShader(type);
-      glShaderSource(id, 1, (const GLchar **) &source, nullptr);
+      glShaderSource(id, 1, (const GLchar**) &source, nullptr);
       glCompileShader(id);
 
       //Check to make sure there were no errors
