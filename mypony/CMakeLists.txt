@@ -7,7 +7,17 @@ find_package(OpenGL REQUIRED)
 find_package(glm REQUIRED)
 find_package(Threads REQUIRED)
 
-add_executable(myapp exe/main.cpp)
+# Qt library
+find_package(Qt5Widgets)
+find_package(Qt5OpenGL)
+set(CMAKE_AUTOMOC ON)
+
+# OpenGL & GLEW library
+find_package(OpenGL)
+
+
+add_executable(myapp exe/glfw.cpp)
+qt5_use_modules(myapp Widgets OpenGL)
 target_compile_options(myapp PRIVATE
         -O0
         -g3
@@ -32,4 +42,5 @@ target_link_libraries(myapp
         glm
         Threads::Threads
         glexample
+        ${QT_LIBRARIES} ${OPENGL_LIBRARIES}
         )
